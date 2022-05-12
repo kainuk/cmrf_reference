@@ -1,0 +1,20 @@
+{
+    "name": "drupal/cmrf_reference",
+    "type": "drupal-module",
+    "description": "Lookup from CiviCRM in Webforms",
+    "keywords": [
+        "Drupal",
+        "CiviCRM",
+        "Webform"
+    ],
+    "homepage": "https://lab.civicrm.org/kainuk/cmrf_reference",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name" : "Klaas Eikelboom",
+            "email" : "klaas.eikelboom@civicoop.org"
+        }    ],
+    "require": {
+        "drupal/cmrf_core": "8.x-kainuk-dev"
+    }
+}

@@ -1,0 +1,10 @@
+webform.element.cmrf_reference:
+  version: VERSION
+  js:
+    js/webform.element.cmrf_reference.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery.once
+    - core/jquery
+    - core/drupalSettings
+    - webform/libraries.jquery.select2

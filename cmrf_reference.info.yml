@@ -1,0 +1,9 @@
+name: 'CMRF Reference Field'
+type: module
+description: 'Adds a Api Reference Field (with autocomplete to the CMFR module)'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: 'CiviCRM'
+dependencies:
+  - drupal:webform
+  - drupal:cmrf_core

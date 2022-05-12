@@ -1,0 +1,10 @@
+cmrf_reference.element.autocomplete:
+  path: '/cmrfreference/{webform}/autocomplete/{key}'
+  defaults:
+    _controller: '\Drupal\cmrf_reference\Controller\CMRFReferenceController::autocomplete'
+  options:
+    parameters:
+      webform:
+        type: 'entity:webform'
+  requirements:
+    _entity_access: 'webform.submission_page'

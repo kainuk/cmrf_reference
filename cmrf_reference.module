@@ -1,0 +1,27 @@
+<?php
+/**
+ * @author Klaas Eikelboom  <klaas.eikelboom@civicoop.org>
+ * @date 16-May-2020
+ * @license  AGPL-3.0
+ *
+ * @file
+ * Contains cmrf_reference.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function cmrf_reference_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the cmrf_reference module.
+    case 'help.page.cmrf_reference':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Adds a Api Reference Field (with autocomplete to the CMFR module)') . '</p>';
+      return $output;
+
+    default:
+  }
+}
