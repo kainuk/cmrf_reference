@@ -133,20 +133,37 @@ class CMRFReference extends TextBase {
     $formCmrf['dataprocessor'] = [
       '#type' => 'select',
       '#title' => $this->t('Dataprocessor'),
-      '#description' => $this->t('Select the dataprocessor'),
+      '#description' => $this->t('Select the dataprocessor hi'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::dataprocessors($connection),
+      '#states'  => [
+        'invisible' => ['select[name="properties[cmrf_connection]"]' => ['value'=> CMRFReferenceUtils::NONE]
+      ]]
     ];
     $formCmrf['cmrf_search'] = [
       '#type' => 'select',
       '#title' => $this->t('Search field'),
       '#description' => $this->t('Select the field to search with'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor),
+      '#states' => [
+        'invisible' =>
+          [
+            ['select[name="properties[cmrf_connection]"]' => ['value' => CMRFReferenceUtils::NONE]],
+            ['select[name="properties[dataprocessor]"]' => ['value' => CMRFReferenceUtils::NONE]],
+          ],
+      ],
     ];
     $formCmrf['cmrf_return'] = [
       '#type' => 'select',
       '#title' => $this->t('Return'),
       '#description' => $this->t('Return value'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor),
+      '#states' => [
+        'invisible' =>
+          [
+            ['select[name="properties[cmrf_connection]"]' => ['value' => CMRFReferenceUtils::NONE]],
+            ['select[name="properties[dataprocessor]"]' => ['value' => CMRFReferenceUtils::NONE]],
+          ],
+      ],
     ];
 
     $formCmrf['autocomplete_limit'] = [
