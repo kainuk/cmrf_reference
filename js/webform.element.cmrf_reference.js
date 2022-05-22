@@ -34,13 +34,16 @@
         .find('select.js-webform-cmrf-reference, .js-webform-cmrf-reference select')
         .once('webform-cmrfReference')
         .each(function () {
+          debugger;
           var $select = $(this);
-          var $name = $select.attr('name');
+          var $name = $select.attr('webform_key');
           var newOption;
           // if the field already has a value, crate an option for it and select it.
-          if(drupalSettings.cmrf_reference.defaultid && drupalSettings.cmrf_reference.defaultid[$name]) {
-            newOption = new Option(drupalSettings.cmrf_reference.defaulttext[$name], drupalSettings.cmrf_reference.defaultid[$name], true, true);
-            $select.append(newOption);
+          if(drupalSettings.cmrf_reference.defaults && drupalSettings.cmrf_reference.defaults[$name]) {
+            for (const [key, value] of  Object.entries(drupalSettings.cmrf_reference.defaults[$name])) {
+              newOption = new Option(value, key, true, true);
+              $select.append(newOption);
+            }
           }
           $select.select2({
             ajax: {
@@ -49,7 +52,7 @@
             },
             width: drupalSettings.cmrf_reference.size[$name],
             placeholder: drupalSettings.cmrf_reference.placeholder[$name],
-            allowClear: true
+            allowClear:  !drupalSettings.cmrf_reference.required[$name]
           });
         });
     }

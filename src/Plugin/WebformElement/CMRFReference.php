@@ -40,7 +40,8 @@ class CMRFReference extends TextBase {
         'cmrf_connection' => CMRFReferenceUtils::NONE,
         'dataprocessor' => CMRFReferenceUtils::NONE,
         'cmrf_search' => CMRFReferenceUtils::NONE,
-        'cmrf_return' => CMRFReferenceUtils::NONE
+        'cmrf_return' => CMRFReferenceUtils::NONE,
+        'cmrf_multiple' => false,
       ] + TextBase::getDefaultProperties();
     // Remove autocomplete property which is not applicable to
     // this autocomplete element.
@@ -58,17 +59,36 @@ class CMRFReference extends TextBase {
     $element['#attached']['drupalSettings']['cmrf_reference']['webform'] =  $webform_submission->getWebform()->id();
     $element['#attached']['drupalSettings']['cmrf_reference']['size'][$element["#webform_key"]] = $element['#size'] ?? '20em';
     $element['#attached']['drupalSettings']['cmrf_reference']['placeholder'][$element["#webform_key"]] = $element['#placeholder'] ?? '';
-    $value = isset($element['#default_value']) ? $element['#default_value'] : false;
-    if($value) {
-      $result = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
-        $element['#dataprocessor'],
-        $element['#cmrf_search'],
-        $value,
-        $element['#cmrf_return']
-      );
-      $element['#attached']['drupalSettings']['cmrf_reference']['defaultid'][$element["#webform_key"]] = $value;
-      $element['#attached']['drupalSettings']['cmrf_reference']['defaulttext'][$element["#webform_key"]] = $result;
+    $element['#attached']['drupalSettings']['cmrf_reference']['required'][$element["#webform_key"]] = $element['#required'] ?? true;
+    if(isset($element['#cmrf_multiple']) && $element['#cmrf_multiple']){
+      $element['#attributes']['multiple'] = 'multiple';
+      $element['#attributes']['name'] = $element["#webform_key"].'[]';
+      $element['#element_validate'] =  [[$this, 'validateElement']];
+      if(isset($element['#required']) && $element['#required']){
+        unset($element['#required']);
+        $element['#attributes']['required'] = 'required';
+      }
     }
+    $element['#attributes']['webform_key'] = $element["#webform_key"];
+    $defaultvalue = isset($element['#default_value']) ? $element['#default_value'] : false;
+    if($defaultvalue) {
+      $values = explode(',',$defaultvalue);
+      $defaults = [];
+      foreach($values as $value) {
+        $defaults[$value] = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
+          $element['#dataprocessor'],
+          $element['#cmrf_search'],
+          $value,
+          $element['#cmrf_return']
+        );
+      }
+      $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
+    }
+  }
+
+  public  function validateElement($element, $form_state){
+    $value = isset($_REQUEST[$element['#webform_key']]) ? implode(',',$_REQUEST[$element['#webform_key']]) : FALSE;
+    $form_state->setValue($element['#webform_key'],$value);
   }
 
   /**
@@ -163,6 +183,10 @@ class CMRFReference extends TextBase {
       '#title' => $this->t('Autocomplete minimum number of characters'),
       '#description' => $this->t('The minimum number of characters a user must type before a search is performed.'),
       '#min' => 1,
+    ];
+    $formCmrf['cmrf_multiple'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow multiple values'),
     ];
     return $formCmrf;
   }
