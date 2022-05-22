@@ -72,17 +72,6 @@ class CMRFReference extends TextBase {
   }
 
   /**
-   * @param $key
-   * @param $form_state
-   *
-   * @return mixed
-   */
-  private function lookupInConfiguration($key,$form_state){
-    $properties = $form_state->getValue('properties') ?? $form_state->get('element_properties');
-    return $properties[$key] ?? CMRFReferenceUtils::NONE;
-  }
-
-  /**
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
@@ -91,8 +80,8 @@ class CMRFReference extends TextBase {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $properties = $form_state->get('element_properties');
-    $connection = $properties['cmrf_connection'];
-    $dataprocessor = $properties['dataprocessor'];
+    $connection = $form_state->getValue('cmrf_connection') ?? $properties['cmrf_connection'];
+    $dataprocessor = $form_state->getValue('dataprocessor') ?? $properties['dataprocessor'];
     $formCmrf = $this->cmrfForm($connection, $dataprocessor);
     $form['cmrf'] = $formCmrf;
     return $form;
@@ -104,12 +93,9 @@ class CMRFReference extends TextBase {
    *
    * @return mixed
    */
+
   public function connectionCallback(array $form, FormStateInterface $form_state) {
-    $properties = $form_state->getValue('properties');
-    $connection = $properties['cmrf_connection'];
-    $dataprocessor = $properties['custom']['dataprocessor'];
-    $formCmrf = $this->cmrfForm($connection, $dataprocessor);
-    return $formCmrf;
+    return $form['properties']['cmrf'];
   }
 
   /**
@@ -119,51 +105,51 @@ class CMRFReference extends TextBase {
    * @return array
    */
   protected function cmrfForm($connection, $dataprocessor) {
+
     $formCmrf = [
       '#type' => 'fieldset',
-      '#title' => $this->t('CiviMFR settingss'),
-      '#attributes' => ['id' => 'cmfr-reference-stuff'],
+      '#title' => $this->t("CiviMFR settings"),
+      '#attributes' => ['id' => 'cmrf-configuration-properties'],
     ];
+
     $formCmrf['cmrf_connection'] = [
       '#type' => 'select',
       '#title' => $this->t('Connection'),
       '#description' => $this->t('Select the connection'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::connections(),
+      '#ajax' => [
+        'callback' => [$this, 'connectionCallback'],
+        'wrapper' => 'cmrf-configuration-properties',
+        'event' => 'change',
+      ],
     ];
+
     $formCmrf['dataprocessor'] = [
       '#type' => 'select',
       '#title' => $this->t('Dataprocessor'),
       '#description' => $this->t('Select the dataprocessor hi'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::dataprocessors($connection),
-      '#states'  => [
-        'invisible' => ['select[name="properties[cmrf_connection]"]' => ['value'=> CMRFReferenceUtils::NONE]
-      ]]
+      '#access' => $connection != CMRFReferenceUtils::NONE,
+      '#ajax' => [
+        'callback' => [$this, 'connectionCallback'],
+        'wrapper' => 'cmrf-configuration-properties',
+        'event' => 'change',
+      ],
     ];
-    $formCmrf['cmrf_search'] = [
+
+    $formCmrf['api_parameters'] = $this->getFormInlineContainer();
+    $formCmrf['api_parameters']['#access'] = ($connection != CMRFReferenceUtils::NONE && $dataprocessor != CMRFReferenceUtils::NONE);
+    $formCmrf['api_parameters']['cmrf_search'] = [
       '#type' => 'select',
       '#title' => $this->t('Search field'),
       '#description' => $this->t('Select the field to search with'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor),
-      '#states' => [
-        'invisible' =>
-          [
-            ['select[name="properties[cmrf_connection]"]' => ['value' => CMRFReferenceUtils::NONE]],
-            ['select[name="properties[dataprocessor]"]' => ['value' => CMRFReferenceUtils::NONE]],
-          ],
-      ],
     ];
-    $formCmrf['cmrf_return'] = [
+    $formCmrf['api_parameters']['cmrf_return'] = [
       '#type' => 'select',
       '#title' => $this->t('Return'),
       '#description' => $this->t('Return value'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor),
-      '#states' => [
-        'invisible' =>
-          [
-            ['select[name="properties[cmrf_connection]"]' => ['value' => CMRFReferenceUtils::NONE]],
-            ['select[name="properties[dataprocessor]"]' => ['value' => CMRFReferenceUtils::NONE]],
-          ],
-      ],
     ];
 
     $formCmrf['autocomplete_limit'] = [
