@@ -42,6 +42,7 @@ class CMRFReference extends TextBase {
         'cmrf_search' => CMRFReferenceUtils::NONE,
         'cmrf_display' => CMRFReferenceUtils::NONE,
         'cmrf_return' => CMRFReferenceUtils::NONE,
+        'cmrf_default_filter' =>  CMRFReferenceUtils::NONE,
         'cmrf_multiple' => false,
       ] + TextBase::getDefaultProperties();
     // Remove autocomplete property which is not applicable to
@@ -78,9 +79,9 @@ class CMRFReference extends TextBase {
       foreach($values as $value) {
         $defaults[$value] = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
           $element['#dataprocessor'],
-          $element['#cmrf_search'],
+          $element['#cmrf_display'],
           $value,
-          $element['#cmrf_return']
+          $element['#cmrf_default_filter']
         );
       }
       $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
@@ -162,21 +163,27 @@ class CMRFReference extends TextBase {
     $formCmrf['api_parameters']['#access'] = ($connection != CMRFReferenceUtils::NONE && $dataprocessor != CMRFReferenceUtils::NONE);
     $formCmrf['api_parameters']['cmrf_search'] = [
       '#type' => 'select',
-      '#title' => $this->t('Search field'),
-      '#description' => $this->t('Select the field to search with'),
+      '#title' => $this->t('Search Filter'),
+      '#description' => $this->t('Dataprocessor Filter that is use to select the options of the reference'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor,'filter'),
     ];
     $formCmrf['api_parameters']['cmrf_display'] = [
       '#type' => 'select',
       '#title' => $this->t('Display field'),
-      '#description' => $this->t('Select the field to display the search result'),
+      '#description' => $this->t('Dataprocessor Field that shows the result of the search so that the user can recognize it an knows what to select. The text template can be used to combine fields'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor,'return'),
     ];
     $formCmrf['api_parameters']['cmrf_return'] = [
       '#type' => 'select',
-      '#title' => $this->t('Return'),
-      '#description' => $this->t('Return value'),
+      '#title' => $this->t('Return Field'),
+      '#description' => $this->t('Value that is returned from the search and will be the result of the select box. Often an unique identifier'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor,'return'),
+    ];
+    $formCmrf['api_parameters']['cmrf_default_filter'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Default Filter'),
+      '#description' => $this->t('Filter used to find the display value of an already filled field. Probably a filter on the return field'),
+      '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor,'filter'),
     ];
 
     $formCmrf['autocomplete_limit'] = [
