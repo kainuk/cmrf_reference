@@ -112,20 +112,20 @@ class CMRFReferenceUtils {
    * @param $dataprocessor
    * @param $searchField
    * @param $searchValue
-   * @param $returnKeyField
+   * @param $returnField
    *
    * @return array
    */
-  static function lookup($connection,$dataprocessor,$searchField,$searchValue,$returnKeyField){
+  static function lookup($connection,$dataprocessor,$searchField,$searchValue,$returnField){
     if (empty($connection) || $connection == CMRFReferenceUtils::NONE
       || empty($dataprocessor) || $dataprocessor == CMRFReferenceUtils::NONE
       || empty($searchField) || $searchField==CMRFReferenceUtils::NONE
-      || empty($returnKeyField) || $returnKeyField==CMRFReferenceUtils::NONE) {
+      || empty($returnField) || $returnField==CMRFReferenceUtils::NONE) {
       \Drupal::logger('cmfr_reference')->warning(t('Incomplete configured CMRF Component will not return any search result'));
       return [];
     }
     $core=\Drupal::service('cmrf_core.core');
-    $call = $core->createCall($connection,$dataprocessor,'getsingle',[$returnKeyField=>$searchValue],[]);
+    $call = $core->createCall($connection,$dataprocessor,'getsingle',[$returnField=>$searchValue],[]);
     $result=$core->executeCall($call);
     return $result[$searchField];
   }
