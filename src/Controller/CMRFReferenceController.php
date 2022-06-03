@@ -66,6 +66,7 @@ class CMRFReferenceController extends ControllerBase {
       $element['#dataprocessor'],
       $element['#cmrf_search'],
       $q,     // the search element
+      $element['#cmrf_display'],
       $element['#cmrf_return'],
       $element['#autocomplete_limit']
     );

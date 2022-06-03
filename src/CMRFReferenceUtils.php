@@ -54,7 +54,7 @@ class CMRFReferenceUtils {
    *
    * @return array
    */
-  static function fields($connection,$dataprocessor){
+  static function fields($connection,$dataprocessor, $type='filter'){
     if($connection == CMRFReferenceUtils::NONE || $dataprocessor == CMRFReferenceUtils::NONE ){
       return [];
     }
@@ -63,7 +63,11 @@ class CMRFReferenceUtils {
     $result = $core->executeCall($call);
     $fields = [];
     foreach($result['values'] as $value){
-      $fields[$value['name']] = $value['title'];
+      if($type=='filter' && $value['api.filter']) {
+        $fields[$value['name']] = $value['title'];
+      } elseif ($type=='return' && $value['api.return']){
+        $fields[$value['name']] = $value['title'];
+      }
     }
     return $fields;
   }
@@ -78,7 +82,7 @@ class CMRFReferenceUtils {
    *
    * @return array
    */
-  static function matches($connection,$dataprocessor,$searchField,$searchValue, $returnField,$limit){
+  static function matches($connection,$dataprocessor,$searchField,$searchValue, $displayField,$returnField,$limit){
     // check if the configuration is complete - if not the function will just return NULL
     if (empty($connection) || $connection == CMRFReferenceUtils::NONE
        || empty($dataprocessor) || $dataprocessor == CMRFReferenceUtils::NONE
@@ -88,7 +92,7 @@ class CMRFReferenceUtils {
       return [];
     }
     $core=\Drupal::service('cmrf_core.core');
-    $call = $core->createCall($connection,$dataprocessor,'get',['return' => $returnField,$searchField => ['LIKE' => '%'.$searchValue.'%']],['limit'=>$limit]);
+    $call = $core->createCall($connection,$dataprocessor,'get',['return' => [$returnField,$displayField],$searchField => ['LIKE' => '%'.$searchValue.'%']],['limit'=>$limit]);
     $result = $core->executeCall($call);
     $matches = [
       'results' => [],
@@ -97,7 +101,7 @@ class CMRFReferenceUtils {
     foreach($result['values'] as $value){
      $matches['results'][]=[
         'id' => $value[$returnField],
-        'text' => $value[$searchField],
+        'text' => $value[$displayField],
      ];
     }
     return $matches;
@@ -126,16 +130,5 @@ class CMRFReferenceUtils {
     return $result[$searchField];
   }
 }
-/**
- * @author Klaas Eikelboom  <klaas.eikelboom@civicoop.org>
- * @date 16-May-2020
- * @license  AGPL-3.0
- */
-
-/**
- * @author Klaas Eikelboom  <klaas.eikelboom@civicoop.org>
- * @date 16-May-2020
- * @license  AGPL-3.0
- */
 
 

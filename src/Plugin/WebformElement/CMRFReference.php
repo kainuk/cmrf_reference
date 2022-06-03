@@ -40,6 +40,7 @@ class CMRFReference extends TextBase {
         'cmrf_connection' => CMRFReferenceUtils::NONE,
         'dataprocessor' => CMRFReferenceUtils::NONE,
         'cmrf_search' => CMRFReferenceUtils::NONE,
+        'cmrf_display' => CMRFReferenceUtils::NONE,
         'cmrf_return' => CMRFReferenceUtils::NONE,
         'cmrf_multiple' => false,
       ] + TextBase::getDefaultProperties();
@@ -163,13 +164,19 @@ class CMRFReference extends TextBase {
       '#type' => 'select',
       '#title' => $this->t('Search field'),
       '#description' => $this->t('Select the field to search with'),
-      '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor),
+      '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor,'filter'),
+    ];
+    $formCmrf['api_parameters']['cmrf_display'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Display field'),
+      '#description' => $this->t('Select the field to display the search result'),
+      '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor,'return'),
     ];
     $formCmrf['api_parameters']['cmrf_return'] = [
       '#type' => 'select',
       '#title' => $this->t('Return'),
       '#description' => $this->t('Return value'),
-      '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor),
+      '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor,'return'),
     ];
 
     $formCmrf['autocomplete_limit'] = [
