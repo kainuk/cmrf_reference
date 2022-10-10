@@ -73,20 +73,6 @@ class CMRFReference extends TextBase {
       }
     }
     $element['#attributes']['webform_key'] = $element["#webform_key"];
-    $defaultvalue = isset($element['#default_value']) ? $element['#default_value'] : FALSE;
-    if ($defaultvalue) {
-      $values = explode(',', $defaultvalue);
-      $defaults = [];
-      foreach ($values as $value) {
-        $defaults[$value] = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
-          $element['#dataprocessor'],
-          $element['#cmrf_display'],
-          $value,
-          $element['#cmrf_default_filter']
-        );
-      }
-      $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
-    }
   }
 
   public function validateElement($element, $form_state) {

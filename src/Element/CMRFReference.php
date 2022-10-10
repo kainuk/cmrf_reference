@@ -6,6 +6,7 @@
  */
 namespace Drupal\cmrf_reference\Element;
 
+use Drupal\cmrf_reference\CMRFReferenceUtils;
 use Drupal\Core\Render\Element\Textfield;
 
 /**
@@ -38,7 +39,21 @@ class CMRFReference extends Textfield {
    */
   public static function preRenderCMRFReference($element) {
     static::setAttributes($element, ['js-webform-cmrf-reference']);
+    $defaultvalue = isset($element['#default_value']) ? $element['#default_value'] : FALSE;
+    if ($defaultvalue) {
+      $values = explode(',', $defaultvalue);
+      $defaults = [];
+      foreach ($values as $value) {
+        $defaults[$value] = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
+          $element['#dataprocessor'],
+          $element['#cmrf_display'],
+          $value,
+          $element['#cmrf_default_filter']
+        );
+      }
+      $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
     return $element;
+  }
   }
 
   /**
