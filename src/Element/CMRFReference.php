@@ -52,8 +52,8 @@ class CMRFReference extends Textfield {
         );
       }
       $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
+    }
     return $element;
-  }
   }
 
   /**
