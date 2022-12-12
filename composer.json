@@ -8,13 +8,13 @@
         "Webform"
     ],
     "homepage": "https://lab.civicrm.org/kainuk/cmrf_reference",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name" : "Klaas Eikelboom",
             "email" : "klaas.eikelboom@civicoop.org"
         }    ],
     "require": {
-        "drupal/cmrf_core": "^2.0@RC"
+        "drupal/cmrf_core": "^2.0"
     }
 }
