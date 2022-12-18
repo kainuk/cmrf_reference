@@ -7,6 +7,7 @@
 namespace Drupal\cmrf_reference\Element;
 
 use Drupal\cmrf_reference\CMRFReferenceUtils;
+use Drupal\Core\Render\Annotation\FormElement;
 use Drupal\Core\Render\Element\Textfield;
 
 /**
