@@ -34,7 +34,6 @@
         .find('select.js-webform-cmrf-reference, .js-webform-cmrf-reference select')
         .once('webform-cmrfReference')
         .each(function () {
-          debugger;
           var $select = $(this);
           var $name = $select.attr('webform_key');
           var newOption;
