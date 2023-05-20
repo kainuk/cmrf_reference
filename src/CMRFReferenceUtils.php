@@ -82,7 +82,7 @@ class CMRFReferenceUtils {
    *
    * @return array
    */
-  static function matches($connection,$dataprocessor,$searchField,$searchValue, $displayField,$returnField,$limit){
+  static function matches($connection,$dataprocessor,$searchField,$searchValue, $displayField,$returnField,$limit,$extraFilter,$extraFilterValue){
     // check if the configuration is complete - if not the function will just return NULL
     if (empty($connection) || $connection == CMRFReferenceUtils::NONE
        || empty($dataprocessor) || $dataprocessor == CMRFReferenceUtils::NONE
@@ -92,7 +92,14 @@ class CMRFReferenceUtils {
       return [];
     }
     $core=\Drupal::service('cmrf_core.core');
-    $call = $core->createCall($connection,$dataprocessor,'get',['return' => [$returnField,$displayField],$searchField => ['LIKE' => '%'.$searchValue.'%']],['limit'=>$limit]);
+    $params = [
+      'return' => [$returnField, $displayField],
+      $searchField => ['LIKE' => '%' . $searchValue . '%']
+    ];
+    if(!empty($extraFilter) || $extraFilter!=CMRFReferenceUtils::NONE){
+      $params[$extraFilter] = $extraFilterValue;
+    }
+    $call = $core->createCall($connection,$dataprocessor,'get', $params,['limit'=>$limit]);
     $result = $core->executeCall($call);
     $matches = [
       'results' => [],

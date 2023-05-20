@@ -43,6 +43,8 @@ class CMRFReference extends TextBase {
         'cmrf_display' => CMRFReferenceUtils::NONE,
         'cmrf_return' => CMRFReferenceUtils::NONE,
         'cmrf_default_filter' => CMRFReferenceUtils::NONE,
+        'cmrf_extra_filter' => CMRFReferenceUtils::NONE,
+        'cmrf_extra_filter_value' => "",
         'cmrf_multiple' => FALSE,
       ] + TextBase::getDefaultProperties();
     // Remove autocomplete property which is not applicable to
@@ -172,6 +174,26 @@ class CMRFReference extends TextBase {
       '#description' => $this->t('Filter used to find the display value of an already filled field. Probably a filter on the return field'),
       '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor, 'filter'),
     ];
+
+    $formCmrf['api_parameters']['cmrf_extra_filter'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Extra Filter'),
+      '#description' => $this->t('Adds an extra parameter to the dataprocessor to narrow down the selection options'),
+      '#options' => [CMRFReferenceUtils::NONE => t('-Select-')] + CMRFReferenceUtils::fields($connection, $dataprocessor, 'filter'),
+    ];
+
+    $formCmrf['api_parameters']['cmrf_extra_filter_value'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Extra Filter Value'),
+      '#description' => $this->t('Value to add to the extra filter parameter'),
+      '#states' => [
+        'invisible' => [
+          [
+            [':input[name="properties[cmrf_extra_filter]"]' => ['value' => CMRFReferenceUtils::NONE]],
+          ]
+        ]]
+    ];
+
 
     $formCmrf['autocomplete_limit'] = [
       '#type' => 'number',

@@ -46,8 +46,18 @@
           }
           $select.select2({
             ajax: {
-              url: "/cmrfreference/"+drupalSettings.cmrf_reference.webform+"/autocomplete/"+$name,
-              dataType: "json"
+              url: "/cmrfreference/" + drupalSettings.cmrf_reference.webform + "/autocomplete/" + $name,
+              dataType: "json",
+              data: function (params) {
+                if (drupalSettings.cmrf_reference.extra_filter_value && drupalSettings.cmrf_reference.extra_filter_value[$name]) {
+                  return {
+                    q: params.term || '', // search term
+                    extra_filter_value: drupalSettings.cmrf_reference.extra_filter_value[$name], //Get your value from other elements using Query, for example.
+                  };
+                } else {
+                  return {q: params.term};
+                }
+              }
             },
             width: drupalSettings.cmrf_reference.size[$name],
             placeholder: drupalSettings.cmrf_reference.placeholder[$name],

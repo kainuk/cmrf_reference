@@ -39,13 +39,13 @@ class CMRFReferenceController extends ControllerBase {
     // Get autocomplete query.
     $q = $request->query->get('q') ?: '';
     if ($q == '') {
-      return new JsonResponse([]);
+      return new JsonResponse(['results' => []]);
     }
 
     // Get the initialized webform element.
     $element = $webform->getElement($key);
     if (!$element) {
-      return new JsonResponse([]);
+      return new JsonResponse(['results' => []]);
     }
 
     // Set default autocomplete properties.
@@ -58,7 +58,7 @@ class CMRFReferenceController extends ControllerBase {
 
     // Check minimum number of characters.
     if (mb_strlen($q) < (int) $element['#autocomplete_match']) {
-      return new JsonResponse([]);
+      return new JsonResponse(['results' => []]);
     }
 
     $matches = CMRFReferenceUtils::matches(
@@ -68,7 +68,9 @@ class CMRFReferenceController extends ControllerBase {
       $q,     // the search element
       $element['#cmrf_display'],
       $element['#cmrf_return'],
-      $element['#autocomplete_limit']
+      $element['#autocomplete_limit'],
+      $element['#cmrf_extra_filter'],
+      $request->query->get('extra_filter_value')
     );
     return new JsonResponse($matches);
   }

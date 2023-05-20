@@ -54,6 +54,10 @@ class CMRFReference extends Textfield {
       }
       $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
     }
+    if (isset($element["#cmrf_extra_filter"]) && $element["#cmrf_extra_filter"] != CMRFReferenceUtils::NONE) {
+      $element['#attached']['drupalSettings']['cmrf_reference']['extra_filter_value'][$element["#webform_key"]] = \Drupal::token()
+        ->replacePlain($element['#cmrf_extra_filter_value']);
+    }
     return $element;
   }
 
