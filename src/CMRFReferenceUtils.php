@@ -136,6 +136,40 @@ class CMRFReferenceUtils {
     $result=$core->executeCall($call);
     return $result[$searchField];
   }
+
+  /**
+   * @param $connection
+   * @param $dataprocessor
+   * @param $valueField
+   * @param $labelField
+   * @param $filterField
+   * @param $filterValue
+   *
+   * @return array
+   */
+  static function options($connection, $dataprocessor, $valueField, $labelField, $filterField, $filterValue){
+    $options = [];
+    if (empty($connection) || $connection == CMRFReferenceUtils::NONE
+      || empty($dataprocessor) || $dataprocessor == CMRFReferenceUtils::NONE
+      || empty($valueField) || $valueField==CMRFReferenceUtils::NONE
+      || empty($labelField) || $labelField==CMRFReferenceUtils::NONE
+      ) {
+      \Drupal::logger('cmfr_reference')->warning(t('Incomplete configured CMRF Component will not return any search result'));
+      return $options;
+    }
+    $core=\Drupal::service('cmrf_core.core');
+    $params = ['return' => [$valueField, $labelField]];
+    if(!empty($filterField) && $filterField!=CMRFReferenceUtils::NONE){
+      $params[$filterField] = $filterValue;
+    }
+    $call = $core->createCall($connection,$dataprocessor,'get',$params,['options' => ['limit' => 0 ]]);
+    $core->executeCall($call);
+    $values = $call->getReply()['values'];
+    foreach ($values as $value){
+      $options[$value[$valueField]]=$value[$labelField];
+    }
+    return $options;
+  }
 }
 
 
