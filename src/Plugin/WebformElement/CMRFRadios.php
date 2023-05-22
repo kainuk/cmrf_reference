@@ -9,6 +9,7 @@ namespace Drupal\cmrf_reference\Plugin\WebformElement;
 
 use Drupal\cmrf_reference\CMRFReferenceUtils;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\Plugin\WebformElement\Radios;
 use Drupal\webform\Plugin\WebformElement\TextBase;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
@@ -22,7 +23,7 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
  *   category = @Translation("CMRF"),
  * )
  */
-class CMRFRadios extends TextBase {
+class CMRFRadios extends Radios {
 
   // Its just magic - add this trait and AjaX works
   use DependencySerializationTrait;
@@ -40,9 +41,11 @@ class CMRFRadios extends TextBase {
         'cmrf_extra_filter' => CMRFReferenceUtils::NONE,
         'cmrf_extra_filter_value' => "",
         'cmrf_multiple' => FALSE,
-      ] + TextBase::getDefaultProperties();
+      ] + parent::getDefaultProperties();
     // Remove autocomplete property which is not applicable to
     // this autocomplete element.
+    unset($properties['options']);
+    unset($properties['options_randomize']);
     return $properties;
   }
 
