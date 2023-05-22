@@ -6,7 +6,6 @@
  */
 namespace Drupal\cmrf_reference\Element;
 
-use Drupal\cmrf_reference\CMRFReferenceUtils;
 use Drupal\Core\Render\Annotation\FormElement;
 use Drupal\Core\Render\Element\Radios;
 
@@ -21,23 +20,9 @@ class CMRFRadios extends Radios {
    * {@inheritdoc}
    */
   public function getInfo() {
-    $class = get_class($this);
     $info = parent::getInfo();
-    $info['#pre_render'][] = [$class, 'preRenderCMRFSelect'];
-    //$info['#theme'] = 'select';
     return $info;
    }
 
-
-  /**
-   * Generete the css class for the jquery element to act on
-   *
-   * @param $element
-   *
-   * @return mixed
-   */
-  public static function preRenderCMRFSelect($element) {
-    return $element;
-  }
 }
 
