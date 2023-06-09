@@ -60,7 +60,7 @@ class CMRFRadios extends Radios {
       $element['#cmrf_value'],
       $element['#cmrf_label'],
       $element['#cmrf_extra_filter'],
-      \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value']));
+      !empty($element['#cmrf_extra_filter_value'])?\Drupal::token()->replacePlain($element['#cmrf_extra_filter_value']):'');
     $element['#options'] = $options;
   }
 
