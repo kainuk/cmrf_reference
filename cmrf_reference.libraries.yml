@@ -4,7 +4,7 @@ webform.element.cmrf_reference:
     js/webform.element.cmrf_reference.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
     - core/jquery
+    - core/once
     - core/drupalSettings
     - webform/libraries.jquery.select2
