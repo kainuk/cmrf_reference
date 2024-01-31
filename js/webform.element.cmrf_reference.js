@@ -30,9 +30,11 @@
         var newOption = new Option($default.text, $default.id, true, false);
         $(this).append(newOption).trigger('change');
       };*/
-      $(context)
-        .find('select.js-webform-cmrf-reference, .js-webform-cmrf-reference select')
-        .once('webform-cmrfReference')
+      $(once(
+        'webform-cmrfReference',
+        'select.js-webform-cmrf-reference, .js-webform-cmrf-reference select',
+        context,
+      ))
         .each(function () {
           var $select = $(this);
           var $name = $select.attr('webform_key');
