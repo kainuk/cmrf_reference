@@ -106,17 +106,33 @@ class CMRFReferenceUtils {
     if(!empty($extraFilter) || $extraFilter!=CMRFReferenceUtils::NONE){
       $params[$extraFilter] = $extraFilterValue;
     }
-    $call = $core->createCall($connection,$dataprocessor,'get', $params,['limit'=>$limit]);
-    $result = $core->executeCall($call);
     $matches = [
       'results' => [],
       'pagination' => ['more' => false]
     ];
+
+    $retrievedIds = [];
+    $call = $core->createCall($connection,$dataprocessor,'get', $params,['limit'=>$limit]);
+    $result = $core->executeCall($call);
     foreach($result['values'] as $value){
-     $matches['results'][]=[
+      $matches['results'][]=[
         'id' => $value[$returnField],
         'text' => $value[$displayField],
-     ];
+      ];
+      $retrievedIds[] = $value[$returnField];
+    }
+
+    unset($params[$returnField]);
+    $call = $core->createCall($connection,$dataprocessor,'get', $params,['limit'=>$limit]);
+    $result = $core->executeCall($call);
+    foreach($result['values'] as $value){
+      if (!in_array($value[$returnField], $retrievedIds)) {
+        $matches['results'][] = [
+          'id' => $value[$returnField],
+          'text' => $value[$displayField],
+        ];
+        $retrievedIds[] = $value[$returnField];
+      }
     }
     return $matches;
   }

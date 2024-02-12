@@ -38,7 +38,10 @@ class CMRFReferenceController extends ControllerBase {
   public function autocomplete(Request $request, WebformInterface $webform, $key) {
     // Get autocomplete query.
     $q = $request->query->get('q') ?: '';
-    $current_selection = $request->query->get('current_selection') ?: [];
+    $current_selection = $request->query->get('current_selection') ?: '';
+    if (strlen($current_selection)) {
+      $current_selection = explode(",", $current_selection);
+    }
 
     // Get the initialized webform element.
     $element = $webform->getElement($key);
