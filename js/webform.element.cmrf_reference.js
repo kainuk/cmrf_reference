@@ -51,13 +51,21 @@
               url: "/cmrfreference/" + drupalSettings.cmrf_reference.webform + "/autocomplete/" + $name,
               dataType: "json",
               data: function (params) {
+                var current_selection = [];
+                $select.select2('data').forEach(function (currentValue) {
+                  current_selection.push(currentValue.id);
+                });
                 if (drupalSettings.cmrf_reference.extra_filter_value && drupalSettings.cmrf_reference.extra_filter_value[$name]) {
                   return {
                     q: params.term || '', // search term
+                    current_selection: current_selection.join(','),
                     extra_filter_value: drupalSettings.cmrf_reference.extra_filter_value[$name], //Get your value from other elements using Query, for example.
                   };
                 } else {
-                  return {q: params.term};
+                  return {
+                    q: params.term,
+                    current_selection: current_selection.join(',')
+                  };
                 }
               }
             },

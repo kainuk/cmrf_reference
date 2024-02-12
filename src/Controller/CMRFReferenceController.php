@@ -38,6 +38,10 @@ class CMRFReferenceController extends ControllerBase {
   public function autocomplete(Request $request, WebformInterface $webform, $key) {
     // Get autocomplete query.
     $q = $request->query->get('q') ?: '';
+    $current_selection = $request->query->get('current_selection') ?: '';
+    if (strlen($current_selection)) {
+      $current_selection = explode(",", $current_selection);
+    }
 
     // Get the initialized webform element.
     $element = $webform->getElement($key);
@@ -57,7 +61,6 @@ class CMRFReferenceController extends ControllerBase {
     if (mb_strlen($q) < (int) $element['#autocomplete_match']) {
       return new JsonResponse(['results' => []]);
     }
-
     $matches = CMRFReferenceUtils::matches(
       $element['#cmrf_connection'],
       $element['#dataprocessor'],
@@ -67,7 +70,9 @@ class CMRFReferenceController extends ControllerBase {
       $element['#cmrf_return'],
       $element['#autocomplete_limit'],
       $element['#cmrf_extra_filter'],
-      $request->query->get('extra_filter_value')
+      $request->query->get('extra_filter_value'),
+      $element['#cmrf_default_filter'],
+      $current_selection
     );
     return new JsonResponse($matches);
   }

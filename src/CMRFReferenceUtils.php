@@ -82,7 +82,7 @@ class CMRFReferenceUtils {
    *
    * @return array
    */
-  static function matches($connection,$dataprocessor,$searchField,$searchValue, $displayField,$returnField,$limit,$extraFilter,$extraFilterValue){
+  static function matches($connection,$dataprocessor,$searchField,$searchValue, $displayField,$returnField,$limit,$extraFilter,$extraFilterValue,$lookupField,$currentSection){
     // check if the configuration is complete - if not the function will just return NULL
     if (empty($connection) || $connection == CMRFReferenceUtils::NONE
        || empty($dataprocessor) || $dataprocessor == CMRFReferenceUtils::NONE
@@ -97,16 +97,49 @@ class CMRFReferenceUtils {
     ];
     if (strlen($searchValue)) {
       $params[$searchField] = ['LIKE' => '%' . $searchValue . '%'];
+    } elseif (!empty($lookupField) && $lookupField!=CMRFReferenceUtils::NONE) {
+      if (is_array($currentSection) && count($currentSection)) {
+        $params[$lookupField] = ['IN' => $currentSection];
+      }
+      elseif (!is_array($currentSection) && strlen($currentSection)) {
+        $params[$lookupField] = $currentSection;
+      }
     }
-    if(!empty($extraFilter) || $extraFilter!=CMRFReferenceUtils::NONE){
+    if(!empty($extraFilter) && $extraFilter!=CMRFReferenceUtils::NONE){
       $params[$extraFilter] = $extraFilterValue;
     }
-    $call = $core->createCall($connection,$dataprocessor,'get', $params,['limit'=>$limit]);
-    $result = $core->executeCall($call);
+    $options = [];
+    if ($limit > 0) {
+      $options['limit'] = $limit;
+    }
+
     $matches = [
       'results' => [],
       'pagination' => ['more' => false]
     ];
+    $foundIds = [];
+    if (!empty($lookupField) && $lookupField!=CMRFReferenceUtils::NONE && isset($params[$lookupField])) {
+      $call = $core->createCall($connection,$dataprocessor,'get', $params,$options);
+      $result = $core->executeCall($call);
+      foreach($result['values'] as $value){
+        $matches['results'][]=[
+          'id' => $value[$returnField],
+          'text' => $value[$displayField],
+        ];
+        $foundIds[] = $value[$returnField];
+      }
+      if (count($foundIds)) {
+        $params[$lookupField] = ['NOT IN' => $foundIds];
+      } else {
+        unset($params[$lookupField]);
+      }
+    }
+    if ($limit > 0 && count($foundIds) && ($limit - count($foundIds) > 0)) {
+      $options['limit'] = $limit - count($foundIds);
+    }
+
+    $call = $core->createCall($connection,$dataprocessor,'get', $params,$options);
+    $result = $core->executeCall($call);
     foreach($result['values'] as $value){
      $matches['results'][]=[
         'id' => $value[$returnField],
