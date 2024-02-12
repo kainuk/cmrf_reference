@@ -82,7 +82,7 @@ class CMRFReferenceUtils {
    *
    * @return array
    */
-  static function matches($connection,$dataprocessor,$searchField,$searchValue, $displayField,$returnField,$limit,$extraFilter,$extraFilterValue){
+  static function matches($connection,$dataprocessor,$searchField,$searchValue, $displayField,$returnField,$limit,$extraFilter,$extraFilterValue, $currentSection){
     // check if the configuration is complete - if not the function will just return NULL
     if (empty($connection) || $connection == CMRFReferenceUtils::NONE
        || empty($dataprocessor) || $dataprocessor == CMRFReferenceUtils::NONE
@@ -97,6 +97,11 @@ class CMRFReferenceUtils {
     ];
     if (strlen($searchValue)) {
       $params[$searchField] = ['LIKE' => '%' . $searchValue . '%'];
+    }
+    if (is_array($currentSection) && count($currentSection)) {
+      $params[$returnField] = ['IN' => $currentSection];
+    } elseif(!empty($currentSection) || $currentSection!=CMRFReferenceUtils::NONE){
+      $params[$returnField] = $currentSection;
     }
     if(!empty($extraFilter) || $extraFilter!=CMRFReferenceUtils::NONE){
       $params[$extraFilter] = $extraFilterValue;
