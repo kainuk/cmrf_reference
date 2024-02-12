@@ -94,8 +94,10 @@ class CMRFReferenceUtils {
     $core=\Drupal::service('cmrf_core.core');
     $params = [
       'return' => [$returnField, $displayField],
-      $searchField => ['LIKE' => '%' . $searchValue . '%']
     ];
+    if (strlen($searchValue)) {
+      $params[$searchField] = ['LIKE' => '%' . $searchValue . '%'];
+    }
     if(!empty($extraFilter) || $extraFilter!=CMRFReferenceUtils::NONE){
       $params[$extraFilter] = $extraFilterValue;
     }
