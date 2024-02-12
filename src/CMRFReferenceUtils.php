@@ -136,7 +136,7 @@ class CMRFReferenceUtils {
     $core=\Drupal::service('cmrf_core.core');
     $call = $core->createCall($connection,$dataprocessor,'getsingle',[$returnField=>$searchValue],[]);
     $result=$core->executeCall($call);
-    return $result[$searchField];
+    return $result[$searchField] ?? NULL;
   }
 
   /**

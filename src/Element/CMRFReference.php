@@ -7,6 +7,7 @@
 namespace Drupal\cmrf_reference\Element;
 
 use Drupal\cmrf_reference\CMRFReferenceUtils;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Annotation\FormElement;
 use Drupal\Core\Render\Element\Textfield;
 
@@ -23,6 +24,8 @@ class CMRFReference extends Textfield {
   public function getInfo() {
     $class = get_class($this);
     $info = parent::getInfo();
+    // maxlength leads to validation errors with multi-value fields.
+    unset($info['#maxlength']);
     $info['#pre_render'][] = [$class, 'preRenderCMRFReference'];
     $info['#theme'] = 'select';
     //$info['#theme_wrappers'] = 'form_element';
@@ -30,6 +33,21 @@ class CMRFReference extends Textfield {
     return $info;
    }
 
+  /**
+   * {@inheritDoc}
+   */
+   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+    if (is_array($input)) {
+      $return = [];
+      foreach ($input as $key => $value) {
+        $return[$key] = parent::valueCallback($element, $value, $form_state);
+      }
+    }
+    else {
+      $return = parent::valueCallback($element, $input, $form_state);
+    }
+    return $return;
+  }
 
   /**
    * Generete the css class for the jquery element to act on
@@ -40,9 +58,8 @@ class CMRFReference extends Textfield {
    */
   public static function preRenderCMRFReference($element) {
     static::setAttributes($element, ['js-webform-cmrf-reference']);
-    $defaultvalue = isset($element['#default_value']) ? $element['#default_value'] : FALSE;
-    if ($defaultvalue) {
-      $values = explode(',', $defaultvalue);
+    if (isset($element['#default_value'])) {
+      $values = !is_array($element['#default_value']) ? [$element['#default_value']] : $element['#default_value'];
       $defaults = [];
       foreach ($values as $value) {
         $defaults[$value] = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
@@ -54,10 +71,12 @@ class CMRFReference extends Textfield {
       }
       $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
     }
+
     if (isset($element["#cmrf_extra_filter"]) && $element["#cmrf_extra_filter"] != CMRFReferenceUtils::NONE) {
       $element['#attached']['drupalSettings']['cmrf_reference']['extra_filter_value'][$element["#webform_key"]] = \Drupal::token()
         ->replacePlain($element['#cmrf_extra_filter_value']);
     }
+
     return $element;
   }
 

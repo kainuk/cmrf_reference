@@ -68,7 +68,6 @@ class CMRFReference extends TextBase {
     if (isset($element['#cmrf_multiple']) && $element['#cmrf_multiple']) {
       $element['#attributes']['multiple'] = 'multiple';
       $element['#attributes']['name'] = $element["#webform_key"] . '[]';
-      $element['#element_validate'] = [[$this, 'validateElement']];
       if (isset($element['#required']) && $element['#required']) {
         unset($element['#required']);
         $element['#attributes']['required'] = 'required';
@@ -77,16 +76,8 @@ class CMRFReference extends TextBase {
     $element['#attributes']['webform_key'] = $element["#webform_key"];
   }
 
-  public function validateElement($element, $form_state) {
-    $value = isset($_REQUEST[$element['#webform_key']]) ? implode(',', $_REQUEST[$element['#webform_key']]) : FALSE;
-    $form_state->setValue($element['#webform_key'], $value);
-  }
-
   /**
-   * @param array $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *
-   * @return array
+   * {@inheritDoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
@@ -99,12 +90,70 @@ class CMRFReference extends TextBase {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function hasMultipleValues(array $element) {
+    if ($this->hasProperty('cmrf_multiple')) {
+      if (isset($element['#cmrf_multiple'])) {
+        return $element['#cmrf_multiple'];
+      }
+      else {
+        $default_property = $this->getDefaultProperties();
+        return $default_property['cmrf_multiple'];
+      }
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function formatTextItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+    $raw_value = $this->getValue($element, $webform_submission, $options);
+    $format = $this->getItemFormat($element);
+
+    if ($format === 'raw') {
+      return $raw_value;
+    }
+
+    // Retrieve display value using default value filter.
+    $value = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
+      $element['#dataprocessor'],
+      $element['#cmrf_display'],
+      $raw_value,
+      $element['#cmrf_default_filter']
+    );
+
+    // When no display value could be retrieved, display a warning.
+    if (NULL === $value) {
+      $this->messenger()->addWarning($this->t(
+        'The display value for the element %element_name could not be retrieved via CiviMRF, raw values are being displayed instead.',
+        ['%element_name' => $element['#title']]
+      ));
+      $value = $raw_value;
+    }
+
+    $options += ['prefixing' => TRUE];
+    if ($options['prefixing']) {
+      if (isset($element['#field_prefix'])) {
+        $value = strip_tags($element['#field_prefix']) . $value;
+      }
+      if (isset($element['#field_suffix'])) {
+        $value .= strip_tags($element['#field_suffix']);
+      }
+    }
+
+    return $value;
+  }
+
+  /**
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return mixed
    */
-
   public function connectionCallback(array $form, FormStateInterface $form_state) {
     return $form['properties']['cmrf'];
   }
