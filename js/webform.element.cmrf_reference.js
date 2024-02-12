@@ -54,6 +54,7 @@
                 if (drupalSettings.cmrf_reference.extra_filter_value && drupalSettings.cmrf_reference.extra_filter_value[$name]) {
                   return {
                     q: params.term || '', // search term
+                    current_selection: $('#' + $name).select2('data'),
                     extra_filter_value: drupalSettings.cmrf_reference.extra_filter_value[$name], //Get your value from other elements using Query, for example.
                   };
                 } else {

@@ -198,14 +198,14 @@ class CMRFReference extends TextBase {
     $formCmrf['autocomplete_limit'] = [
       '#type' => 'number',
       '#title' => $this->t('Autocomplete limit'),
-      '#description' => $this->t("The maximum number of matches to be displayed."),
-      '#min' => 1,
+      '#description' => $this->t("The maximum number of matches to be displayed. 0 means no maximum"),
+      '#min' => 0,
     ];
     $formCmrf['autocomplete_match'] = [
       '#type' => 'number',
       '#title' => $this->t('Autocomplete minimum number of characters'),
-      '#description' => $this->t('The minimum number of characters a user must type before a search is performed.'),
-      '#min' => 1,
+      '#description' => $this->t('The minimum number of characters a user must type before a search is performed. 0 means an empty search is allowed'),
+      '#min' => 0,
     ];
     $formCmrf['cmrf_multiple'] = [
       '#type' => 'checkbox',
