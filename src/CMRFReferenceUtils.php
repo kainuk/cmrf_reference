@@ -100,7 +100,7 @@ class CMRFReferenceUtils {
     }
     if (is_array($currentSection) && count($currentSection)) {
       $params[$returnField] = ['IN' => $currentSection];
-    } elseif(!empty($currentSection) || $currentSection!=CMRFReferenceUtils::NONE){
+    } elseif(!is_array($currentSection) && !empty($currentSection) || $currentSection!=CMRFReferenceUtils::NONE){
       $params[$returnField] = $currentSection;
     }
     if(!empty($extraFilter) || $extraFilter!=CMRFReferenceUtils::NONE){
