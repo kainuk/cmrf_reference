@@ -58,7 +58,9 @@ class CMRFReference extends Textfield {
    */
   public static function preRenderCMRFReference($element) {
     static::setAttributes($element, ['js-webform-cmrf-reference']);
-    $extraFilterValue = \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value']);
+    $extraFilterValue = isset($element['#cmrf_extra_filter']) && $element['#cmrf_extra_filter'] != CMRFReferenceUtils::NONE
+      ? \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value'])
+      : NULL;
     if (isset($element['#default_value'])) {
       $values = !is_array($element['#default_value']) ? [$element['#default_value']] : $element['#default_value'];
       $defaults = [];
@@ -75,7 +77,7 @@ class CMRFReference extends Textfield {
       $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
     }
 
-    if (isset($element["#cmrf_extra_filter"]) && $element["#cmrf_extra_filter"] != CMRFReferenceUtils::NONE) {
+    if (isset($extraFilterValue)) {
       $element['#attached']['drupalSettings']['cmrf_reference']['extra_filter_value'][$element["#webform_key"]] = $extraFilterValue;
     }
 

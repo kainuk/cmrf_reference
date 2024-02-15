@@ -118,7 +118,9 @@ class CMRFReference extends TextBase {
       return $raw_value;
     }
 
-    $extraFilterValue = \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value']);
+    $extraFilterValue = isset($element['#cmrf_extra_filter']) && $element['#cmrf_extra_filter'] != CMRFReferenceUtils::NONE
+      ? \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value'])
+      : NULL;
     // Retrieve display value using default value filter.
     $value = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
       $element['#dataprocessor'],
