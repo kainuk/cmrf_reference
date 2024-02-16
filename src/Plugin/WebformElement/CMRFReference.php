@@ -127,7 +127,7 @@ class CMRFReference extends TextBase {
       $element['#cmrf_display'],
       $raw_value,
       $element['#cmrf_default_filter'],
-      $element['#cmrf_extra_filter'],
+      $element['#cmrf_extra_filter'] ?? NULL,
       $extraFilterValue
     );
 

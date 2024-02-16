@@ -70,7 +70,7 @@ class CMRFReference extends Textfield {
           $element['#cmrf_display'],
           $value,
           $element['#cmrf_default_filter'],
-          $element['#cmrf_extra_filter'],
+          $element['#cmrf_extra_filter'] ?? NULL,
           $extraFilterValue
         );
       }
