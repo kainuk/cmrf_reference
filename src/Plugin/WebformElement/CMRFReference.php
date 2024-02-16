@@ -118,25 +118,30 @@ class CMRFReference extends TextBase {
       return $raw_value;
     }
 
-    $extraFilterValue = isset($element['#cmrf_extra_filter']) && $element['#cmrf_extra_filter'] != CMRFReferenceUtils::NONE
-      ? \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value'])
-      : NULL;
-    // Retrieve display value using default value filter.
-    $value = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
-      $element['#dataprocessor'],
-      $element['#cmrf_display'],
-      $raw_value,
-      $element['#cmrf_default_filter'],
-      $element['#cmrf_extra_filter'] ?? NULL,
-      $extraFilterValue
-    );
+    if (isset($raw_value)) {
+      $extraFilterValue = isset($element['#cmrf_extra_filter']) && $element['#cmrf_extra_filter'] != CMRFReferenceUtils::NONE
+        ? \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value'])
+        : NULL;
+      // Retrieve display value using default value filter.
+      $value = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
+        $element['#dataprocessor'],
+        $element['#cmrf_display'],
+        $raw_value,
+        $element['#cmrf_default_filter'],
+        $element['#cmrf_extra_filter'] ?? NULL,
+        $extraFilterValue
+      );
 
-    // When no display value could be retrieved, display a warning.
-    if (NULL === $value) {
-      $this->messenger()->addWarning($this->t(
-        'The display value for the element %element_name could not be retrieved via CiviMRF, raw values are being displayed instead.',
-        ['%element_name' => $element['#title']]
-      ));
+      // When no display value could be retrieved, display a warning.
+      if (NULL === $value) {
+        $this->messenger()->addWarning($this->t(
+          'The display value for the element %element_name could not be retrieved via CiviMRF, raw values are being displayed instead.',
+          ['%element_name' => $element['#title']]
+        ));
+        $value = $raw_value;
+      }
+    }
+    else {
       $value = $raw_value;
     }
 
