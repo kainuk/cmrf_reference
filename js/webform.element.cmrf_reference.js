@@ -25,11 +25,6 @@
       if (!$.fn.select2) {
         return;
       }
-      /*if($default) {
-        var $default = drupalSettings.cmrf_reference.default;
-        var newOption = new Option($default.text, $default.id, true, false);
-        $(this).append(newOption).trigger('change');
-      };*/
       $(once(
         'webform-cmrfReference',
         'select.js-webform-cmrf-reference, .js-webform-cmrf-reference select',
@@ -38,14 +33,6 @@
         .each(function () {
           var $select = $(this);
           var $name = $select.attr('webform_key');
-          var newOption;
-          // if the field already has a value, crate an option for it and select it.
-          if(drupalSettings.cmrf_reference.defaults && drupalSettings.cmrf_reference.defaults[$name]) {
-            for (const [key, value] of  Object.entries(drupalSettings.cmrf_reference.defaults[$name])) {
-              newOption = new Option(value, key, true, true);
-              $select.append(newOption);
-            }
-          }
           $select.select2({
             ajax: {
               url: "/cmrfreference/" + drupalSettings.cmrf_reference.webform + "/autocomplete/" + $name,

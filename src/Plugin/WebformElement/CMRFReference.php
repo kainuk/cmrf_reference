@@ -120,7 +120,7 @@ class CMRFReference extends TextBase {
 
     if (isset($raw_value)) {
       $extraFilterValue = isset($element['#cmrf_extra_filter']) && $element['#cmrf_extra_filter'] != CMRFReferenceUtils::NONE
-        ? \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value'])
+        ? \Drupal::token()->replacePlain($element['#cmrf_extra_filter_value'], ['webform_submission' => $webform_submission])
         : NULL;
       // Retrieve display value using default value filter.
       $value = CMRFReferenceUtils::lookup($element['#cmrf_connection'],

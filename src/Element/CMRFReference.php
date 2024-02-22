@@ -65,6 +65,9 @@ class CMRFReference extends Textfield {
       $values = !is_array($element['#default_value']) ? [$element['#default_value']] : $element['#default_value'];
       $defaults = [];
       foreach ($values as $value) {
+        if (!strlen($value)) {
+          continue;
+        }
         $defaults[$value] = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
           $element['#dataprocessor'],
           $element['#cmrf_display'],
@@ -75,6 +78,12 @@ class CMRFReference extends Textfield {
         );
       }
       $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
+
+      if (count($defaults)) {
+        $element['#default_value'] = array_keys($defaults);
+        $element['#options'] = $defaults;
+      }
+
     }
 
     if (isset($extraFilterValue)) {
