@@ -36,16 +36,37 @@ class CMRFReference extends Textfield {
   /**
    * {@inheritDoc}
    */
-   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
-    if (is_array($input)) {
-      $return = [];
-      foreach ($input as $key => $value) {
-        $return[$key] = parent::valueCallback($element, $value, $form_state);
+  public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+    // This part is copied/adapted from
+    // \Drupal\Core\Render\Element\Select::valueCallback().
+    if (isset($element['#cmrf_multiple']) && $element['#cmrf_multiple']) {
+      if ($input !== FALSE) {
+        // If an enabled multi-select submits NULL, it means all items are
+        // unselected. A disabled multi-select always submits NULL, and the
+        // default value should be used.
+        if (empty($element['#disabled'])) {
+          $return = [];
+          if (is_array($input)) {
+            foreach ($input as $key => $value) {
+              $return[$key] = parent::valueCallback($element, $value, $form_state);
+            }
+          }
+        }
+        else {
+          $return = (isset($element['#default_value']) && is_array($element['#default_value'])) ? $element['#default_value'] : [];
+        }
+      }
+      else {
+        $return = NULL;
       }
     }
+
+    // For single-value fields, use
+    // \Drupal\Core\Render\Element\Textfield::valueCallback().
     else {
       $return = parent::valueCallback($element, $input, $form_state);
     }
+
     return $return;
   }
 
