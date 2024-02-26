@@ -86,14 +86,19 @@ class CMRFReference extends Textfield {
       $values = !is_array($element['#default_value']) ? [$element['#default_value']] : $element['#default_value'];
       $defaults = [];
       foreach ($values as $value) {
-        $defaults[$value] = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
-          $element['#dataprocessor'],
-          $element['#cmrf_display'],
-          $value,
-          $element['#cmrf_default_filter'],
-          $element['#cmrf_extra_filter'] ?? NULL,
-          $extraFilterValue
-        );
+        // Ignore empty values added by
+        // \Drupal\Core\Form\FormBuilder::handleInputElement() when saving
+        // drafts.
+        if ('' !== $value) {
+          $defaults[$value] = CMRFReferenceUtils::lookup($element['#cmrf_connection'],
+            $element['#dataprocessor'],
+            $element['#cmrf_display'],
+            $value,
+            $element['#cmrf_default_filter'],
+            $element['#cmrf_extra_filter'] ?? NULL,
+            $extraFilterValue
+          );
+        }
       }
       $element['#attached']['drupalSettings']['cmrf_reference']['defaults'][$element["#webform_key"]] = $defaults;
     }
