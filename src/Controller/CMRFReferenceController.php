@@ -69,7 +69,7 @@ class CMRFReferenceController extends ControllerBase {
       $element['#cmrf_display'],
       $element['#cmrf_return'],
       $element['#autocomplete_limit'],
-      $element['#cmrf_extra_filter'],
+      $element['#cmrf_extra_filter'] ?? NULL,
       $request->query->get('extra_filter_value'),
       $element['#cmrf_default_filter'],
       $current_selection
