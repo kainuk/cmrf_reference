@@ -22,8 +22,7 @@ function cmrf_reference_update_9101(&$sandbox) {
 
   // Re-fill submission IDs for remaining webforms.
   while (
-    count($sandbox['webformIds']) !== 0
-    && count($sandbox['submissionIds']) < $batchLimit
+    count($sandbox['webformIds']) !== 0 && empty($sandbox['submissionIds'])
   ) {
     $webformId = array_shift($sandbox['webformIds']);
     $webform = \Drupal\webform\Entity\Webform::load($webformId);
@@ -47,13 +46,14 @@ function cmrf_reference_update_9101(&$sandbox) {
       ->accessCheck(FALSE)
       ->condition('webform_id', $webformId);
     $sandbox['submissionIds'] += $submissionQuery->execute();
+    $sandbox['elements'] = $elements;
   }
 
   // Process a batch of already retrieved webform submissions.
   foreach (array_splice($sandbox['submissionIds'], 0, $batchLimit) as $submissionId) {
     $submission = \Drupal\webform\Entity\WebformSubmission::load($submissionId);
     $saveSubmission = FALSE;
-    $submissionData = array_intersect_key($submission->getData(), $elements);
+    $submissionData = array_intersect_key($submission->getData(),  $sandbox['elements']);
     // Transform comma-separated multi-value records into delta-based
     // separate records.
     foreach ($submissionData as $elementName => &$value) {
