@@ -32,21 +32,22 @@
       ))
         .each(function () {
           var $select = $(this);
-          var $name = $select.attr('webform_key');
+          var $webform_key = $select.attr('webform_key');
+          var $webform= $select.attr('webform');
           $select.select2({
             ajax: {
-              url: "/cmrfreference/" + drupalSettings.cmrf_reference.webform + "/autocomplete/" + $name,
+              url: "/cmrfreference/" + $webform + "/autocomplete/" + $webform_key,
               dataType: "json",
               data: function (params) {
                 var current_selection = [];
                 $select.select2('data').forEach(function (currentValue) {
                   current_selection.push(currentValue.id);
                 });
-                if (drupalSettings.cmrf_reference.extra_filter_value && drupalSettings.cmrf_reference.extra_filter_value[$name]) {
+                if (drupalSettings.cmrf_reference[$webform].extra_filter_value && drupalSettings.cmrf_reference[$webform].extra_filter_value[$webform_key]) {
                   return {
                     q: params.term || '', // search term
                     current_selection: current_selection.join(','),
-                    extra_filter_value: drupalSettings.cmrf_reference.extra_filter_value[$name], //Get your value from other elements using Query, for example.
+                    extra_filter_value: drupalSettings.cmrf_reference[$webform].extra_filter_value[$webform_key], //Get your value from other elements using Query, for example.
                   };
                 } else {
                   return {
@@ -56,9 +57,9 @@
                 }
               }
             },
-            width: drupalSettings.cmrf_reference.size[$name],
-            placeholder: drupalSettings.cmrf_reference.placeholder[$name],
-            allowClear:  !drupalSettings.cmrf_reference.required[$name]
+            width: drupalSettings.cmrf_reference[$webform].size[$webform_key],
+            placeholder: drupalSettings.cmrf_reference[$webform].placeholder[$webform_key],
+            allowClear:  !drupalSettings.cmrf_reference[$webform].required[$webform_key]
           });
         });
     }

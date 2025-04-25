@@ -60,11 +60,10 @@ class CMRFReference extends TextBase {
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
     parent::prepare($element, $webform_submission);
     $element['#attached']['library'][] = 'cmrf_reference/webform.element.cmrf_reference';
-    $element['#attached']['drupalSettings']['cmrf_reference']['webform'] = $webform_submission->getWebform()
-      ->id();
-    $element['#attached']['drupalSettings']['cmrf_reference']['size'][$element["#webform_key"]] = $element['#size'] ?? '20em';
-    $element['#attached']['drupalSettings']['cmrf_reference']['placeholder'][$element["#webform_key"]] = $element['#placeholder'] ?? '';
-    $element['#attached']['drupalSettings']['cmrf_reference']['required'][$element["#webform_key"]] = $element['#required'] ?? TRUE;
+    $webform = $element["#webform"];
+    $element['#attached']['drupalSettings']['cmrf_reference'][$webform]['size'][$element["#webform_key"]] = $element['#size'] ?? '20em';
+    $element['#attached']['drupalSettings']['cmrf_reference'][$webform]['placeholder'][$element["#webform_key"]] = $element['#placeholder'] ?? '';
+    $element['#attached']['drupalSettings']['cmrf_reference'][$webform]['required'][$element["#webform_key"]] = $element['#required'] ?? TRUE;
     if (isset($element['#cmrf_multiple']) && $element['#cmrf_multiple']) {
       $element['#attributes']['multiple'] = 'multiple';
       $element['#attributes']['name'] = $element["#webform_key"] . '[]';
@@ -74,6 +73,7 @@ class CMRFReference extends TextBase {
       }
     }
     $element['#attributes']['webform_key'] = $element["#webform_key"];
+    $element['#attributes']['webform'] = $webform;
   }
 
   /**
