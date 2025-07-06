@@ -63,7 +63,7 @@ class CMRFReference extends TextBase {
     $webform = $element["#webform"];
     $element['#attached']['drupalSettings']['cmrf_reference'][$webform]['size'][$element["#webform_key"]] = $element['#size'] ?? '20em';
     $element['#attached']['drupalSettings']['cmrf_reference'][$webform]['placeholder'][$element["#webform_key"]] = $element['#placeholder'] ?? '';
-    $element['#attached']['drupalSettings']['cmrf_reference'][$webform]['required'][$element["#webform_key"]] = $element['#required'] ?? TRUE;
+    $element['#attached']['drupalSettings']['cmrf_reference'][$webform]['required'][$element["#webform_key"]] = $element['#required'] ?? FALSE;
     if (isset($element['#cmrf_multiple']) && $element['#cmrf_multiple']) {
       $element['#attributes']['multiple'] = 'multiple';
       $element['#attributes']['name'] = $element["#webform_key"] . '[]';
