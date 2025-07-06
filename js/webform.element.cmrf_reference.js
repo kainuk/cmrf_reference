@@ -31,15 +31,15 @@
         context,
       ))
         .each(function () {
-          var $select = $(this);
-          var $webform_key = $select.attr('webform_key');
-          var $webform= $select.attr('webform');
+          let $select = $(this);
+          let $webform_key = $select.attr('webform_key');
+          let $webform= $select.attr('webform');
           $select.select2({
             ajax: {
               url: "/cmrfreference/" + $webform + "/autocomplete/" + $webform_key,
               dataType: "json",
               data: function (params) {
-                var current_selection = [];
+                let current_selection = [];
                 $select.select2('data').forEach(function (currentValue) {
                   current_selection.push(currentValue.id);
                 });
