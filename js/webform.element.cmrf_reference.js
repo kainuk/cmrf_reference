@@ -17,8 +17,6 @@
    *
    * @type {Drupal~behavior}
    *
-   * @prop {Drupal~behaviorAttach} attach
-   * Attaches the drag behavior to a applicable table element.
    */
   Drupal.behaviors.cmrfReference = {
     attach: function (context) {
