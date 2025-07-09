@@ -57,7 +57,7 @@
             },
             width: drupalSettings.cmrf_reference[$webform].size[$webform_key],
             placeholder: drupalSettings.cmrf_reference[$webform].placeholder[$webform_key],
-            allowClear:  !drupalSettings.cmrf_reference[$webform].required[$webform_key]
+            allowClear: !drupalSettings.cmrf_reference[$webform].required[$webform_key]
           });
         });
         $('select.js-webform-cmrf-reference').on('state:readonly',function(event) {
