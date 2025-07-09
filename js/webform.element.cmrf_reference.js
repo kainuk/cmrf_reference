@@ -31,7 +31,7 @@
         .each(function () {
           let $select = $(this);
           let $webform_key = $select.attr('webform_key');
-          let $webform= $select.attr('webform');
+          let $webform = $select.attr('webform');
           $select.select2({
             ajax: {
               url: "/cmrfreference/" + $webform + "/autocomplete/" + $webform_key,
