@@ -34,6 +34,7 @@
           let $webform = $select.attr('webform');
           $select.select2({
             ajax: {
+              delay: 300,
               url: "/cmrfreference/" + $webform + "/autocomplete/" + $webform_key,
               dataType: "json",
               data: function (params) {
