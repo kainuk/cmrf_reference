@@ -203,7 +203,7 @@ class CMRFReferenceUtils {
     if(!empty($filterField) && $filterField!=CMRFReferenceUtils::NONE){
       $params[$filterField] = $filterValue;
     }
-    $call = $core->createCall($connection,$dataprocessor,'get',$params,['options' => ['limit' => 0 ]]);
+    $call = $core->createCall($connection,$dataprocessor,'get',$params,['limit' => 0]);
     $core->executeCall($call);
     $values = $call->getReply()['values'];
     foreach ($values as $value){
